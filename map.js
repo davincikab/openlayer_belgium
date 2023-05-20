@@ -26,7 +26,7 @@ const getFillColor = (value) => {
 
 
 const vectorSource = new ol.source.Vector({
-    url: '/Steglitz-Zehlendorf.geojson',
+    url: './Steglitz-Zehlendorf.geojson',
     format: new ol.format.GeoJSON() 
 });
   
@@ -121,7 +121,7 @@ const mapOne = new ol.Map({
 
 const mapTwo = new ol.Map({
     layers: [
-        wmsLayer1
+        wmsLayer2
     ],
     target: 'map2',
     view: new ol.View({
@@ -142,7 +142,7 @@ const mapTwo = new ol.Map({
 
 const mapThree = new ol.Map({
     layers: [
-        wmsLayer2
+        wmsLayer1
     ],
     target: 'map3',
     view: new ol.View({
