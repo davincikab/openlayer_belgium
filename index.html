@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Openlayers</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&family=Roboto&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/openlayers/dist/ol.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div id="map-container" class="map-container open">
+            <div id="map">
+                <button id="toggle-dashboard" class="toggle-dashboard btn">Dashboard</button>
+
+                <div class="coordinate-control"></div>
+            </div>
+            
+            <div id="popup" class="ol-popup">
+                <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+                <div id="popup-content"></div>
+            </div>
+
+            <div id="side-tab" class="side-tab">
+                <div class="header">
+                    <ul class="nav nav-tabs" id="myTab">
+                        <li class="nav-item">
+                            <button class="nav-link" id="about-tab" data-bs-toggle="tab" data-bs-target="#about-tab-pane" type="button" role="tab" aria-controls="about-tab-pane" aria-selected="true">
+                                About
+                            </button>
+                        </li>
+
+                        <li class="nav-item">
+                            <button class="nav-link active" id="layers-tab" data-bs-toggle="tab" data-bs-target="#layers-tab-pane" type="button" role="tab" aria-controls="layers-tab-pane" aria-selected="true">
+                                Layers
+                            </button>
+                        </li>
+
+                        <li class="nav-item">
+                            <button class="nav-link" id="styling-tab" data-bs-toggle="tab" data-bs-target="#styling-tab-pane" type="button" role="tab" aria-controls="styling-tab-pane" aria-selected="true">
+                                Styling
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="tab-body tab-content">
+                    <div class="tab-item tab-pane fade show" id="about-tab-pane" role="tabpanel" aria-labelledby="about-tab" tabindex="0">
+                        <div class="tab-header">
+                            <b>Lorem Ipsum</b>
+                        </div>
+
+                        <div class="tab-item-body">
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                                Sed malesuada mauris nec orci consectetur, eu tristique ante maximus. 
+                            </p>
+                            <p>
+                                Nullam tristique ante nec enim blandit, ut blandit elit laoreet. In ut augue velit.
+                                Aliquam felis turpis, volutpat sed turpis ultrices, varius faucibus felis. 
+                            </p>
+    
+                            <p>
+                                In maximus purus lectus, in lobortis arcu hendrerit id. Aenean tempor malesuada eros, in venenatis libero aliquam ac. 
+                                Nam odio enim, faucibus at lacinia vel, hendrerit ac neque.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="tab-item tab-pane fade active show" id="layers-tab-pane" role="tabpanel" aria-labelledby="layers-tab" tabindex="0">
+
+                        <div class="layer-group">
+                            <h3>Base Maps</h3>
+                            <div class="card-list">
+                                <div class="card mb-3 basemap-toggler active" data-value="OSM">
+                                    <div class="mini-map" id="map1" width="100px" height="100px"></div>
+                                    <div class="title">OSM</div>
+                                </div>
+
+                                <div class="card mb-3 basemap-toggler" data-value="WMS Layer 1">
+                                    <div class="mini-map" id="map2" width="100px" height="100px"></div>
+                                    <div class="title">Digital Imagery</div>
+                                </div>
+    
+                                <div class="card mb-3 basemap-toggler" data-value="Bodenauflösung Farbe">
+                                    <div class="mini-map" id="map3" width="100px" height="100px"></div>    
+                                    <div class="title">WMS 2</div>                                
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="layer-group">
+                            <h3>WFS Layers</h3>
+
+                            <div class="layer-list">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                      OSM
+                                    </label>
+                                </div>
+                                
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault">
+                                      WFS 2
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="tab-item tab-pane fade show " id="style-tab-pane" role="tabpanel" aria-labelledby="style-tab" tabindex="0">
+                        <p>Styling</p>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="footer-section"></div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/openlayers/dist/ol.min.js"></script>
+    <script src="map.js"></script>
+</body>
+</html>
