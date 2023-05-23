@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&family=Roboto&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/openlayers/dist/ol.min.css">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
@@ -19,6 +20,16 @@
         <div id="map-container" class="map-container open">
             <div id="map">
                 <button id="toggle-dashboard" class="toggle-dashboard btn">Dashboard</button>
+
+                <div class="control-btn-group">
+                    <div class="control-btn full-screen-button" id="fullscreen-btn">
+                        <i class="fa fa-expand"></i>
+                    </div>
+    
+                    <div class="control-btn zoom-extent-btn" id="zoom-to-extent">
+                        <i class="fa fa-arrows-to-circle"></i>
+                    </div>
+                </div>
 
                 <div class="coordinate-control"></div>
             </div>
@@ -44,8 +55,14 @@
                         </li>
 
                         <li class="nav-item">
-                            <button class="nav-link" id="styling-tab" data-bs-toggle="tab" data-bs-target="#styling-tab-pane" type="button" role="tab" aria-controls="styling-tab-pane" aria-selected="true">
+                            <button class="nav-link" id="style-tab" data-bs-toggle="tab" data-bs-target="#style-tab-pane" type="button" role="tab" aria-controls="style-tab-pane" aria-selected="true">
                                 Styling
+                            </button>
+                        </li>
+
+                        <li class="nav-item">
+                            <button class="nav-link" id="charts-tab" data-bs-toggle="tab" data-bs-target="#charts-tab-pane" type="button" role="tab" aria-controls="charts-tab-pane" aria-selected="true">
+                                Charts
                             </button>
                         </li>
                     </ul>
@@ -84,14 +101,14 @@
                                     <div class="title">OSM</div>
                                 </div>
 
-                                <div class="card mb-3 basemap-toggler" data-value="WMS Layer 1">
+                                <div class="card mb-3 basemap-toggler" data-value="Atlas Map">
                                     <div class="mini-map" id="map2" width="100px" height="100px"></div>
-                                    <div class="title">Digital Imagery</div>
+                                    <div class="title">Atlas Map</div>
                                 </div>
     
-                                <div class="card mb-3 basemap-toggler" data-value="Bodenauflösung Farbe">
+                                <div class="card mb-3 basemap-toggler" data-value="Digital Orthophoto">
                                     <div class="mini-map" id="map3" width="100px" height="100px"></div>    
-                                    <div class="title">WMS 2</div>                                
+                                    <div class="title">Digital Orthophoto</div>                                
                                 </div>
                             </div>
                             
@@ -102,16 +119,16 @@
 
                             <div class="layer-list">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                      OSM
+                                    <input class="form-check-input wfs-toggler" type="checkbox" data-value="Bezirke" id="bezirke" checked>
+                                    <label class="form-check-label" for="bezirke">
+                                        Bezirke Berlin
                                     </label>
                                 </div>
                                 
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                                    <label class="form-check-label" for="flexCheckDefault">
-                                      WFS 2
+                                    <input class="form-check-input wfs-toggler" type="checkbox" data-value="Kreisgrenzen" id="kreisgrenzen" checked>
+                                    <label class="form-check-label" for="kreisgrenzen">
+                                        Kreisgrenzen
                                     </label>
                                 </div>
                             </div>
@@ -119,8 +136,54 @@
 
                     </div>
 
-                    <div class="tab-item tab-pane fade show " id="style-tab-pane" role="tabpanel" aria-labelledby="style-tab" tabindex="0">
-                        <p>Styling</p>
+                    <div class="tab-item tab-pane fade show px-3 py-3" id="style-tab-pane" role="tabpanel" aria-labelledby="style-tab" tabindex="0">
+                        
+                        <div class="attributs-select">
+                            <label for="attribute">Select Attribute</label>
+                            <select name="attributes" id="attribute" class="form-control">
+                                <option value="G_BIV" selected>G BIV</option>
+                                <option value="G_UNIV">G UNIV</option>
+                                <option value="A_1">A 1</option>
+                                <option value="B_2">B 2</option>
+                                <option value="L_1N">L 1N</option>
+                            </select>
+                        </div>
+
+                        <div class="styling mt-2">
+                            <label for="style-type">Styling</label>
+                            <select name="style" id="style-type" class="form-control">
+                                <option value="graduated">Graduated</option>
+                                <option value="categorized">Categorized</option>
+                            </select>
+                        </div>
+
+                        <div class="legend-container mt-5">
+                            <!--  -->
+                            <div class="legend-title" id="legend-title">Legend Title</div>
+                            <div class="legend-container" id="legend-container">
+
+                                <div class="legend-item">
+                                    <div class="legend-card"></div>
+                                    <div class="legend-card-label">Label Items</div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="tab-item tab-pane fade show px-3 py-3" id="charts-tab-pane" role="tabpanel" aria-labelledby="charts-tab" tabindex="0">
+                        <h5>Chart Section</h5>
+
+                        <div class="chart-section">
+                            <div class="chart-item">
+                                <span>Pie G_BIV</span>
+                            </div>
+                        </div>
+
+                        <div class="chart-item">
+                            <span>Lie</span>
+                        </div>
                     </div>
 
                 </div>
@@ -128,7 +191,20 @@
             </div>
         </div>
 
-        <div class="footer-section"></div>
+        <div class="footer-section">
+            <div class="">
+                <div class="title">Attribution</div>
+                <ul class="attribution-list">
+                    <li>© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors.</li>
+                    <li>© <a href="https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&PRODUCTID=00fdc3fb-3bc1-4548-bca2-e735fb11c974">Verwaltungsgrenzen Brandenburg mit Berlin (WFS)</a></li>
+                    
+                    <li>© <a href="https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&PRODUCTID=253b7d3d-6b42-47dc-b127-682de078b7ae">Digitale Orthophotos 20cm Bodenauflösung Farbe Brandenburg mit Berlin (WMS)</a></li>
+                    <li>© <a href="https://geobroker.geobasis-bb.de/gbss.php?MODE=GetProductInformation&PRODUCTID=d2eaa212-f68d-4e2d-a7e7-8e8063d1b855">WebAtlasDE Fix Brandenburg mit Berlin (WMS)</a></li>
+
+                </ul>
+            </div>
+           
+        </div>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>

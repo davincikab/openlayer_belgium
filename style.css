@@ -6,12 +6,14 @@ body {
 }
 
 .map-container {
-    height: 95vh;
+    height: 88vh;
 }
 
 .footer-section {
-    height: 5vh;
-    background-color: black;
+    height: 12vh;
+    background-color: #286c6c;
+    color:white;
+    padding: 0.25rem;
 }
 
 #map {
@@ -61,19 +63,44 @@ body {
     width: 100%;
 }
 
+.ol-rotate {
+    top:80px;
+}
+
 .coordinate-control {
     position: absolute;
-    left:0px;
+    right:0px;
     bottom: 0px;
-    margin:0px 0px 10px 10px;   
+    margin:0px 10px 10px 10px;   
     z-index: 2;
     font-size: 13px;
-    background-color: white;
-    padding:2px;
+    background-color: #4873a7ac;
+    color:#f3f3f3;
+    padding:2px 8px;
     box-shadow: 0px 0px 0.5rem #ddd;
     border-radius: 3px;
 }
 
+.attribution-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    font-size: 13px;
+}
+
+
+.attribution-list  {
+    padding: 0px;
+    margin: 0;
+}
+
+.attribution-list li {
+    list-style: none;
+}
+
+.attribution-list li a {
+   text-decoration: none;
+   color:rgb(161, 195, 243);
+}
 /* popup section */
 .ol-popup {
     position: absolute;
@@ -144,6 +171,43 @@ body {
 }
 
 
+/* map controls */
+.control-btn-group {
+    position: absolute;
+    top:110px;
+    right: 10px;
+    z-index: 2;
+}
+
+.control-btn.full-screen-button {   
+    margin-top:10px; 
+    pointer-events: all;
+}
+
+.control-btn > * {
+    pointer-events: none;
+}
+
+.control-btn.zoom-extent-btn {
+    margin-top:10px;
+}
+
+.control-btn {
+    position: relative;
+    background-color: #4872A7;
+    color:rgb(227, 227, 227);
+    border-radius: 3px;
+    width: 28px;
+    height: 28px;
+    box-shadow: 0px 0px 0.25rem #222;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
 /* tabs */
 .tab-item .tab-header {
     font-weight: 600;
@@ -172,7 +236,7 @@ body {
 }
 
 .mini-map {
-    height: 80px;
+    height: 85px;
     width: 120px;
     pointer-events: none;
 }
@@ -182,10 +246,10 @@ body {
 }
 
 .basemap-toggler .title {
-    background-color: #222;
+    background-color: #4873a7;
     color:white;
     text-align: center;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .basemap-toggler {
@@ -197,5 +261,20 @@ body {
 }
 
 .basemap-toggler.active {
-    border:2px solid orange;
+    border:2px solid #4873a7;
+}
+
+
+/* legend section */
+.legend-card {
+    width:30px;
+    height: 15px;
+    background-color: maroon;
+    margin-right: 5px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
 }
