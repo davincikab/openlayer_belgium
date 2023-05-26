@@ -42,8 +42,23 @@ const getFillColorGraduated = (value) => {
         values.push(i);
     };
 
-    let index = values.findIndex(val => val == value);
-    return colors[index] || '#eeeeee';
+    let colorIndex = 0;
+    values.forEach((a,i) => {
+        let nextValue = values[i + 1];
+
+        if(!nextValue) { 
+            return; 
+        }
+
+        if(nextValue > value && a <= value) {
+            colorIndex = i;
+        }
+
+    });
+
+    
+    // let index = values.findIndex(val => val == value);
+    return colors[colorIndex] || '#eeeeee';
 }
 
 
@@ -301,6 +316,11 @@ const displayFeatureInfo = function (event) {
         return;
     }
 
+    map.setView(new ol.View({
+        center:[...coordinate],
+        zoom: 15,
+    }))
+
     console.log(feature.N);
     let properties = feature.N;
     let keys = ['EW_21', 'EW_HA_21', 'QM_EW', 'A_1', 'VG_21', 'B_2', 'L_1', 'L_1N', 'G_BIV'];
@@ -342,7 +362,10 @@ map.on('singleclick', function (evt) {
 document.getElementById("toggle-dashboard").onclick = (e) => {
     document.querySelector('.map-container').classList.toggle('open');
 
-    map.updateSize();
+    setTimeout((e) => {
+        map.updateSize();
+    }, 100);
+    
     
 }
 
@@ -447,8 +470,11 @@ tabs.forEach(tabEl => {
 
 // legend creation
 function createCategoryLegend(field='G_BIV') {
-    let values = vectorLayer.getSource().getFeatures().map(ft => ft.N[field]);
-    values = [...new Set(values)].sort();
+    console.log("Category: GBIV");
+
+    // let values = vectorLayer.getSource().getFeatures().map(ft => ft.N[field]);
+    // values = [...new Set(values)].sort();
+    let values = [10, 11, 12, 21, 22, 23, 31, 32, 33];
 
     console.log(values);
 
@@ -464,7 +490,7 @@ function createCategoryLegend(field='G_BIV') {
         'First High, Second high',
     ];
 
-    console.log(values)
+    console.log(values);
 
     let items = values.map((val,i) => {
         let color = getFillColor(val);
@@ -477,20 +503,28 @@ function createCategoryLegend(field='G_BIV') {
 
     });
 
+    // console.log(items.join(""))
     document.getElementById("legend-title").innerHTML = `Bivariate Styling: ${field}`;
-    document.getElementById('legend-container').innerHTML = items.join("");
+    document.getElementById("legend-container").innerHTML = items.join("");
 }
 
 function createGraduatedLegend(field='G_UNIV') {
+    console.log('Creating G UNIV Legend');
+
     let values = [];
 
     for(let i=0; i<=1; i+=0.125) {
         values.push(i);
     };
 
+    console.log(values);
+
     // return;
-    let items = values.slice(0, -1).map((val,i) => {
+    let items = values.slice(0, -1).map((val, i) => {
+        console.log("Value: ", val);
         let color = getFillColorGraduated(val);
+
+        console.log("Color: ", color);
         let label = i !== values.length ? `${val} - ${values[i+1]}` : `> ${val}`;
 
         return `<div class="legend-item">
@@ -508,18 +542,30 @@ map.on('postrender', (e) => {
     console.log("Loaded");
 
     if(vectorLayer.getVisible()) {
-        // createCategoryLegend();
-
-        createGraduatedLegend();
+        // createGraduatedLegend();
     }
     
 });
+
+console.log("Updated ")
+createCategoryLegend();
 
 
 // changes in the attribute
 let atttributeMapping = {
     'G_UNIV':'graduated',
-    'G_BIV':'categorized'
+    'G_BIV':'categorized',
+    'A_1':'graduated',
+    'B_2':'graduated',
+    'L_1N':'graduated'
+};
+
+let colorMapping = {
+    'G_UNIV':'graduated',
+    'G_BIV':'categorized',
+    'A_1':'graduated',
+    'B_2':'graduated',
+    'L_1N':'graduated'
 };
 
 document.getElementById("attribute").onchange = (e) => {
@@ -528,40 +574,182 @@ document.getElementById("attribute").onchange = (e) => {
     let stylingType = atttributeMapping[value];
     document.getElementById("style-type").value = stylingType;
 
-    let styleCustom = new ol.style.Style({
-        stroke: new ol.style.Stroke({
-            color: 'white',
-            lineDash: [4],
-            width: 1,
-        }),
-        fill: new ol.style.Fill({
-            color: 'rgba(0, 0, 255, 0.1)',
-          }),
+    let strokeStyle = new ol.style.Stroke({
+        color: 'white',
+        width: 0.6,
     });
 
     if(value == 'G_UNIV') {
 
         vectorLayer.getSource().getFeatures().forEach(ft => {
-            console.log(ft.get(value));
+            // console.log(ft.get(value));
 
             let color = getFillColorGraduated(ft.get(value));
-            styleCustom.getFill().setColor(color);
+            let style = new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: color,
+                }),
+                stroke:strokeStyle
+            });
 
-            console.log(styleCustom.getFill());
-            ft.setStyle(styleCustom);
+            // console.log(styleCustom.getFill());
+            ft.setStyle(style);
         });
+
+        createGraduatedLegend('G_UNIV');
 
     } else if(value == 'G_BIV') {
-       
         vectorLayer.getSource().getFeatures().forEach(ft => {
-            console.log(ft.get(value));
+            // console.log(ft.get(value));
 
-            let color = getFillColor(ft.get(value));
-            styleCustom.getFill().setColor(color);
+            let color = getFillColor(ft.get('G_BIV'));
+            let style = new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: color,
+                }),
+                stroke:strokeStyle
+            });
 
-            console.log(styleCustom.getFill());
-            ft.setStyle(styleCustom);
+            // styleCustom.getFill().setColor(color);
+
+            // console.log(styleCustom.getFill());
+            ft.setStyle(style);
         });
+
+        createCategoryLegend('G_BIV');
     }
+
+
 }
 
+// Calculation option
+class ComputationModule {
+    constructor() {
+        this.colorSchemes = '';
+        this.attr1 = 'G_UNIV';
+        this.attr2 = 'A_1';
+
+        this.field_name = "new_field";
+
+        this.operator = "sum";
+
+        this.fields = ['G_UNIV', 'A_1', 'L_1', 'L_1N', 'QM_EW', 'VG_21', 'B_2'];
+
+        this.loadData();
+    }
+
+    loadData() {
+        fetch('Steglitz-Zehlendorf.geojson')
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+
+            this.dataset = JSON.parse(JSON.stringify(data));
+        })
+        .catch(console.error)
+    }
+
+    fireEventListeners() {
+        document.getElementById("attr1").onchange = (e) => {
+            this.attr1 = e.target.value;
+            this.updateOption();
+        }
+
+        document.getElementById("attr2").onchange = (e) => {
+            this.attr2 = e.target.value;
+
+            console.log("Attr: ", this.attr2);
+        }
+
+        document.getElementById("operator").onchange = (e) => {
+            this.attr1 = e.target.value;
+        }
+
+        document.getElementById("field_name").oninput = (e) => {
+            this.field_name = e.target.value;
+        }
+
+        // download btn
+        document.getElementById("btn-download").onclick = (e) => {
+            this.exportDataToCSV();
+        }
+
+        // calulate btn
+        document.getElementById("btn-compute").onclick = (e) => {
+            this.calculateNewField();
+        }
+    }
+
+    updateOption() {
+        document.getElementById("attr2").innerHTML = "";
+        this.fields.filter(field => field != this.attr1).map((field,i) => {
+
+            if(i == 0) {
+                document.getElementById("attr2").innerHTML += `<option value="${field}" selected>${field}</option>`;
+                this.attr2 = field;
+
+                return;
+            } 
+            document.getElementById("attr2").innerHTML += `<option value="${field}">${field}</option>`
+        });        
+    }
+
+    chooseColorScheme() {
+
+    }
+
+    calculateNewField() {
+        switch(this.operator) {
+            case 'sum':
+                this.dataset.features = this.dataset.features.map(ft => {
+                    ft.properties[this.field_name] = ft.properties[this.attr1] + ft.properties[this.attr2];
+
+                    return ft;
+                })          
+            case 'multiply':
+                this.dataset.features = this.dataset.features.map(ft => {
+                    ft.properties[this.field_name] = ft.properties[this.attr1] * ft.properties[this.attr2];
+
+                    return ft;
+                })
+            case 'division':
+                this.dataset.features = this.dataset.features.map(ft => {
+                    ft.properties[this.field_name] = ft.properties[this.attr1] / ft.properties[this.attr2];
+
+                    return ft;
+                })
+        }
+
+        // update the visual with new data;
+        // choose the color scheme
+    }
+
+    exportDataToCSV() {
+        // create a csv file
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        csvContent +=  Object.keys(this.dataset.features[0].properties).join(",") + "\r\n";
+
+        this.dataset.features.forEach(ft => {
+            console.log(ft);
+
+            let row = Object.values(ft.properties).join(",");
+            csvContent += row + "\r\n";
+        });
+
+        let downloadAnchor = document.getElementById("download-link");
+        var encodedUri = encodeURI(csvContent);
+        downloadAnchor.href = encodedUri;
+
+        downloadAnchor.click();
+    }
+
+}
+
+const computeInstance = new ComputationModule();
+computeInstance.fireEventListeners();
+
+
+
+// default fields: EW_21, AREA_QM, EW_HA_21, TYPE, 
+// A_1, B_2, L_1N, G_BIV, G_UNIV

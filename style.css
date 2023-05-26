@@ -266,8 +266,13 @@ body {
 
 
 /* legend section */
+.legend-container__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 .legend-card {
-    width:30px;
+    width:20px;
     height: 15px;
     background-color: maroon;
     margin-right: 5px;
@@ -276,5 +281,22 @@ body {
 .legend-item {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 13px;
+}
+
+
+/* compute section */
+.calculation-section .header {
+    background-color: #cccccc;
+    padding: 0.25rem;
+}
+
+.section-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.section-body .form-control {
+   width: 100px;
 }
